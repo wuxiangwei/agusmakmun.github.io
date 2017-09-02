@@ -10,6 +10,7 @@ tags: Leveldb
 * Kramdown table of contents
 {:toc .toc}
 
+
 # 编译
 
 默认make，不编译测试程序。
@@ -85,7 +86,37 @@ PosixEnv::BGThread() --> DBImpl::BGWork() --> DBImpl::BackgroundCall() --> DBImp
 "Compacting %d@%d + %d@%d files"
 文件数@层号，L层的文件数@L层 + L+1层的文件数@L+1层。
 
-# 注意事项
+# FAQ
+
+## 每Level的大小
+
+```
+mem 4MB
+immem 4MB
+0 10MB
+1 10MB
+2 100MB
+3 1G
+4 10G
+5 100G
+6 无穷大
+```
+Level0和Level1都是10M，其余Level，每增加一层增加10倍，参考MaxBytesForLevel函数。
+
+## Key大小比较
+
+```c
+inline int Slice::compare(const Slice& b) const {
+  const int min_len = (size_ < b.size_) ? size_ : b.size_;
+  int r = memcmp(data_, b.data_, min_len);
+  if (r == 0) {
+    if (size_ < b.size_) r = -1;
+    else if (size_ > b.size_) r = +1;
+  }
+  return r;
+}
+```
+按字节比较。
 
 ## Slice构造函数不能传入临时变量
 
@@ -105,13 +136,19 @@ Slice::data_直接引用了构造函数传入的数据，如果传入的是临�
 查看Leveldb的LOG文件可以发现Manual compact 的开始和结束Key不正确。
 
 
-## Leveldb v1.5版本显示日志问题
+## v1.5版本显示日志问题
 
 ```
 2017/08/30-23:12:35.013862 7f36641ff700 Manual compaction at level-0 from 'paxos .. 'paxos; will stop at (end)
 2017/08/30-23:12:35.015385 7f36641ff700 Manual compaction at level-1 from 'paxos .. 'paxos; will stop at 'paxos
-2017/08/30-23:12:35.133755 7f36641ff700 Manual compaction at level-1 from 'paxos .. 'paxos; will stop at (end)
-2017/08/30-23:12:35.134655 7f36641ff700 Manual compaction at level-2 from 'paxos .. 'paxos; will stop at 'paxos
-2017/08/30-23:12:35.261322 7f36641ff700 Manual compaction at level-2 from 'paxos .. 'paxos; will stop at 'paxos
 ```
 日志中手动compaction的开始和结束位置相同，都为paxos。正确的位置应该为“paxos012345”，由于Key中存在一个0，所以字符串被阶段了。
+
+## v1.5版本compact问题
+
+为避免单次CompactRange的范围过大，Leveldb将一次CompactRange拆分成多次执行。但Level0是个例外，Level0的Key-range不能拆分。因为Level0的不同sst文件允许包含同个Key的不同Value，如果拆分，将导致Key的当前。
+
+
+
+
+
