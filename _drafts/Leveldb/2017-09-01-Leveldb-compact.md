@@ -7,7 +7,7 @@ categories: Leveldb
 tags: Leveldb
 ---
 
-* Kramdown table of contents                                                                        
+* Kramdown table of contents
 {:toc .toc}
 
 # 编译
@@ -22,6 +22,7 @@ check: all $(PROGRAMS) $(TESTS)
 ```
 
 写入NULL表项，会引发Compact操作。
+
 ```shell
 DBImpl::Write() --> DBImpl::MakeRoomForWrite(true) --> DBImpl::MaybeScheduleCompaction()
 ```
@@ -84,17 +85,33 @@ PosixEnv::BGThread() --> DBImpl::BGWork() --> DBImpl::BackgroundCall() --> DBImp
 "Compacting %d@%d + %d@%d files"
 文件数@层号，L层的文件数@L层 + L+1层的文件数@L+1层。
 
-# 坑
+# 注意事项
+
+## Slice构造函数不能传入临时变量
 
 ```c
+class Slice {
+private:
+    const char* data_;
+}
+
 {
     leveldb::Slice start(Key(0));
     leveldb::Slice end(Key(10));
     db_->CompactRange(&start, &end);
 }
 ```
-上述代码的问题在于，Slice::data_直接引用了构造函数传入的数据，所以不能传入临时变量。
+Slice::data_直接引用了构造函数传入的数据，如果传入的是临时变量，临时变量销毁后data_将指向一个未知位置。
 查看Leveldb的LOG文件可以发现Manual compact 的开始和结束Key不正确。
 
 
+## Leveldb v1.5版本显示日志问题
 
+```
+2017/08/30-23:12:35.013862 7f36641ff700 Manual compaction at level-0 from 'paxos .. 'paxos; will stop at (end)
+2017/08/30-23:12:35.015385 7f36641ff700 Manual compaction at level-1 from 'paxos .. 'paxos; will stop at 'paxos
+2017/08/30-23:12:35.133755 7f36641ff700 Manual compaction at level-1 from 'paxos .. 'paxos; will stop at (end)
+2017/08/30-23:12:35.134655 7f36641ff700 Manual compaction at level-2 from 'paxos .. 'paxos; will stop at 'paxos
+2017/08/30-23:12:35.261322 7f36641ff700 Manual compaction at level-2 from 'paxos .. 'paxos; will stop at 'paxos
+```
+日志中手动compaction的开始和结束位置相同，都为paxos。正确的位置应该为“paxos012345”，由于Key中存在一个0，所以字符串被阶段了。
