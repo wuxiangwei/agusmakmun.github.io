@@ -7,23 +7,27 @@ categories: Leveldb
 tags: Leveldb
 ---
 
+* Kramdown table of contents                                                                        
+{:toc .toc}
+
 # 编译
 
 默认make，不编译测试程序。
 查看Makefile文件，按需编译。
 make check编译结束自动运行测试用例。
-```
+
+```shell
 check: all $(PROGRAMS) $(TESTS)                                                                     
        for t in $(TESTS); do echo "***** Running $$t"; ./$$t || exit 1; done
 ```
 
-
 写入NULL表项，会引发Compact操作。
-```
+```shell
 DBImpl::Write() --> DBImpl::MakeRoomForWrite(true) --> DBImpl::MaybeScheduleCompaction()
 ```
 
 Write流程：
+
 - 写日志
 - 写内存
 
@@ -82,7 +86,7 @@ PosixEnv::BGThread() --> DBImpl::BGWork() --> DBImpl::BackgroundCall() --> DBImp
 
 # 坑
 
-```C++
+```c
 {
     leveldb::Slice start(Key(0));
     leveldb::Slice end(Key(10));
@@ -91,5 +95,6 @@ PosixEnv::BGThread() --> DBImpl::BGWork() --> DBImpl::BackgroundCall() --> DBImp
 ```
 上述代码的问题在于，Slice::data_直接引用了构造函数传入的数据，所以不能传入临时变量。
 查看Leveldb的LOG文件可以发现Manual compact 的开始和结束Key不正确。
+
 
 
