@@ -54,6 +54,7 @@ tar xf ceph-deb.tar.gz -C ceh-debs
 ```
 
 安装deb包：    
+
 ```
 sudo dpkg -i *.deb
 # 安装缺失的依赖包

@@ -10,6 +10,5 @@ tags: Ceph
 查看自启动：    
 `sudo chkconfig --list | grep ceph`
 
-
 查看OSD所在主机：    
 `ceph osd find 123`

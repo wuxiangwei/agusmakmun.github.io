@@ -14,4 +14,3 @@ sudo megacli -LDGetProp -Cache -Lall -a0
 查看磁盘调度策略：    
 cat /sys/block/sda/queue/scheduler
 
-
