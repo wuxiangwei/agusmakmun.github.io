@@ -22,6 +22,48 @@ check: all $(PROGRAMS) $(TESTS)
        for t in $(TESTS); do echo "***** Running $$t"; ./$$t || exit 1; done
 ```
 
+# 源码分析
+
+CompactMemTalbe
+
+用户线程先写空表项(NULL)，然后阻塞等待，直到`imm_`中没有数据为止。`imm_`只在compact时才变为空。    
+如果`imm_`在写空表项前就为空，那么写空表项的操作最终会将`mem_`的数据写入文件？ Yes！    
+如果`imm_`在写空表项前为非空，那么写空表项的操作最终会将`mem_`的数据写入文件，还是只是将`imm_`的数据写入文件？全部写入！
+
+```
+DBImpl::TEST_CompactMemTable() --> DBImpl::Write() --> DBImpl::MakeRoomForWrite(true)
+```
+
+Write函数加锁等待，直到所有它前面的Write请求完成为止。    
+MakeRoomForWrite函数：    
+
+1. 如果`imm_`中有数据，一直等待，直到`imm_`的数据被compact掉为止。
+2. 如果level0的文件数量超过阈值，一直等待，直到level0的文件被compact掉，低于阈值为止。
+3. 此时，可以保证`imm_`中没有数据。
+4. 新建Log文件；
+5. 将`imm_`指向`mem_`指向的数据；
+6. 为`mem_`新建一个MemTable；
+7. 调度Compaction；
+8. 返回。
+
+也就是说，用户线程写空表项，会将所有空表项前面的数据刷入到文件，不管这些数据原本已经在`imm_`中还是在`mem_`中。主要通过3个步骤实现：(1)等待空表项前面的数据，至少写入`mem_`后才开始真正执行写空表项的操作；(2)等待当前`imm_`中的数据全部写入文件后才继续后续操作；(3)将当前的`mem_`数据更换为`imm_`数据，等待这部分数据全部写入文件后才返回。
+
+
+```
+DBImpl
+    |-- imm_: MemTable*  // Memtable being compacted
+
+1. DBImpl::BackgroundCall() --> DBImpl::BackgroundCompaction()
+2. DBImpl::DoCompactionWork()
+--> DBImpl::CompactMemTable() --> DBImpl::WriteLevel0Table()
+```
+
+BackgroundCompaction
+检查imm_，优先对imm_做compact。
+
+
+
+
 写入NULL表项，会引发Compact操作。
 
 ```shell
