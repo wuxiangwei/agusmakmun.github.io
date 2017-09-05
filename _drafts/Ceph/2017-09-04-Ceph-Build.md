@@ -7,6 +7,8 @@ category: [Ceph]
 tags: Ceph
 ---
 
+* Kramdown table of contents
+{:toc .toc}
 
 # 生成deb包
 
@@ -40,10 +42,26 @@ pubt1-nova72.yq.163.org
 pubt1-nova73.yq.163.org    
 
 Nova节点：    
-pubt1-nova42.yq.163.org    
+udo apt-get  install libfcgi0ldbl
+ubt1-nova42.yq.163.org    
 pubt1-nova30.yq.163.org    
 
 
+解压到指定目录：    
+```
+mkdir ceph-debs
+tar xf ceph-deb.tar.gz -C ceh-debs
+```
+
+安装deb包：    
+```
+sudo dpkg -i *.deb
+# 安装缺失的依赖包
+sudo apt-get install -f
+sudo apt-get  install libfcgi0ldbl
+sudo dpkg -i *.deb
+```
+注意操作系统的版本和Ceph版本的匹配，否则会有依赖问题。
 
 
 
