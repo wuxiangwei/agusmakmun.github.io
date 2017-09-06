@@ -14,6 +14,11 @@ tags: Ceph
 
 修改debian/changelog文件，修改版本号。
 
+```
+-- Xiangwei Wu <wuxiangwei@corp.netease.com>  Wed, 6 Sep 2017 16:39:53 +0800
+```
+注意，邮箱和日期间有两个空格，否则打包会出现`badly formatted trailer line`告警。
+
 # 生成deb包
 
 新建个干净的虚拟机。    
