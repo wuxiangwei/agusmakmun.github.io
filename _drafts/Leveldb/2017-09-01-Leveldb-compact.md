@@ -49,68 +49,8 @@ MakeRoomForWrite函数：
 ## CompactRange
 
 ```
-DBImpl
-    |-- imm_: MemTable*  // Memtable being compacted
-
-1. DBImpl::BackgroundCall() --> DBImpl::BackgroundCompaction()
-2. DBImpl::DoCompactionWork()
---> DBImpl::CompactMemTable() --> DBImpl::WriteLevel0Table()
-```
-
-BackgroundCompaction
-检查imm_，优先对imm_做compact。
-
-
-
-
-写入NULL表项，会引发Compact操作。
-
-```shell
-DBImpl::Write() --> DBImpl::MakeRoomForWrite(true) --> DBImpl::MaybeScheduleCompaction()
-```
-
-Write流程：
-
-- 写日志
-- 写内存
-
-```
-DBImpl
-    |-- log_: log::Writer
-
-log::Writer::AddRecord();
-WriteBatchInternal::InsertInto()
-```
-
-
-Compact流程：
-- 分段compact
-
-
-```
-PosixEnv
-    |-- queue_: BGQueue
-        |-- arg: void*  // 任务参数
-        |-- void (function*)(void*)  // 任务函数
-
+// 投递compact任务
 DBImpl::CompactRange(begin, end) --> DBImpl::TEST_CompactRange(level, begin, end) --> DBImpl::MaybeScheduleCompaction() --> PosixEnv::Schedule()
-
-
-Compaction
-    |-- level_: int
-    |-- input_version_: Version*
-    |-- inputs_: std::vector<FileMetaData*>  // each compaction reads inputs from "level_" and "level_+1"
-
-
-CompactionState
-    |-- compaction: Compaction* const
-    |-- smallest_snapshot: SequenceNumber
-
-VersionSet
-    |-- last_sequence_: uint64_t
-
-versionSet::MakeInputIterator
-
 
 // compact线程
 // 如果队列为空，等待；否则，取出任务，执行任务函数。
@@ -119,8 +59,39 @@ PosixEnv::BGThread() --> DBImpl::BGWork() --> DBImpl::BackgroundCall() --> DBImp
 // 如果手动compact，调用VersionSet::CompactRange；否则调用VersionSet::PickCompaction()，获得1个Compaction实例。
 ```
 
-1. 计算和给定key-range存在overlap的level的最大值；
-2. 逐层compact
+分次Compact。如果一次Compact的Range太大，分成多次Compact，不过对Level0除外。Level0允许存在重复Key，如果分次Compact，就会导致Key回退到旧版本。     
+
+```cpp
+void DBImpl::BackgroundCompaction() {
+    if (is_manual) {
+        c = versions_->CompactRange(m->level, m->begin, m->end);
+        m->done = (c == NULL);  // 标记此次compact未完成
+        if (c != NULL) {
+            // 此次compact的结束点，下次compact的起点
+            manual_end = c->input(0, c->num_input_files(0) - 1)->largest;
+        }
+    } 
+
+    if (is_manual) {
+        manual_compaction_ = NULL;
+    }
+}
+
+Compaction* VersionSet::CompactRange() {
+    if (level > 0) {
+        const uint64_t limit = MaxFileSizeForLevel(level);
+        uint64_t total = 0;
+        for (size_t i = 0; i < inputs.size(); i++) {
+            uint64_t s = inputs[i]->file_size;
+            total += s;
+            if (total >= limit) {
+                inputs.resize(i + 1);  // 丢弃i+1后面的文件
+                break;
+            }
+        }
+    }
+}
+```
 
 
 打印日志
@@ -188,8 +159,3 @@ Slice::data_直接引用了构造函数传入的数据，如果传入的是临�
 ## v1.5版本compact问题
 
 为避免单次CompactRange的范围过大，Leveldb将一次CompactRange拆分成多次执行。但Level0是个例外，Level0的Key-range不能拆分。因为Level0的不同sst文件允许包含同个Key的不同Value，如果拆分，将导致Key的当前。
-
-
-
-
-
