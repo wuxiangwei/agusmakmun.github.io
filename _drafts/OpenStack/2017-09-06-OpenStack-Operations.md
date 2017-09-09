@@ -7,6 +7,8 @@ categories: OpenStack
 tags: OpenStack
 ---
 
+* Kramdown table of content
+{:toc, toc}
 
 # Cinder
 

@@ -1,6 +1,6 @@
 title: Shanno's Blog
 description: My Personal Stack Problems
-author: shanno
+author: 無為
 github: https://github.com/wuxiangwei
 about: 爱技术，爱生活，做个简单人
 disqus_shortname: 
@@ -16,28 +16,16 @@ collections:
     permalink: /project/:path/
 
 social:
-    - icon: fa-facebook
-      link: "#"
-    - icon: fa-twitter
-      link: "https://twitter.com/agusmakmun6"
-    - icon: fa-linkedin
-      link: "https://www.linkedin.com/in/summonagus"
-    - icon: fa-stack-exchange
-      link: "#"
     - icon: fa-github
-      link: "https://github.com/agusmakmun"
-
-share:
-  twitter_username: agusmakmun6
-  fb_appid: 1749788565247320
+      link: "https://github.com/wuxiangwei"
 
 urls:
     - text: About Me
       url: /about/
-    - text: My Projects
-      url: /projects/
-    - text: XML Feed
-      url: /feed.xml
+#     - text: My Projects
+#       url: /projects/
+#     - text: XML Feed
+#       url: /feed.xml
 
 url: "https://wuxiangwei.github.io"
 baseurl: ""
