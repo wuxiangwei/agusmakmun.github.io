@@ -10,7 +10,7 @@ tags: Ceph
 * Kramdown table of contents
 {:toc .toc}
 
-# Hammer v0.94.6 版本
+# v0.94.6版本
 
 ## 修改版本号
 
@@ -42,7 +42,7 @@ git check到指定的版本。
 对已安装的deb包，执行`dpkg -s ceph-common`命令。
 
 
-## 安装deb包
+## 测试deb包
 
 解压到指定目录：    
 ```

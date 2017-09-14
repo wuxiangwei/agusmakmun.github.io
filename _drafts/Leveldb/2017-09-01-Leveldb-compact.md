@@ -150,7 +150,7 @@ Slice::data_直接引用了构造函数传入的数据，如果传入的是临�
 
 ## v1.5版本显示日志问题
 
-```
+```shell
 2017/08/30-23:12:35.013862 7f36641ff700 Manual compaction at level-0 from 'paxos .. 'paxos; will stop at (end)
 2017/08/30-23:12:35.015385 7f36641ff700 Manual compaction at level-1 from 'paxos .. 'paxos; will stop at 'paxos
 ```
