@@ -34,11 +34,12 @@ rebase，顾名思义，修改分支的base，然后在新base上应用已经修
 
 
 应用场景2：   
-本地代码库有commit没提交到远程版本库，远程版本库也有新的commit。此时，拉取远程版本库。
+本地代码库有commit没提交到远程版本库，远程版本库也有新的commit。此时，先拉取远程版本库再rebase。
 
 1. 执行`git fetch origin`命令拉取远程版本，但不自动合并；
 2. 执行`git rebase origin/master`将本地的commit重新apply到origin/master；
 
+也可以直接`git pull origin`，但这会自动新增一个merge提交。在对提交的注释比较严谨的地方，使用fetch配合rebase的方法得到的结果会比较干净。
 
 
 
