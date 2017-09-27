@@ -60,6 +60,3 @@ Status DBImpl::MakeRoomForWrite() {
 合并操作对`TEST_CompactMemTable`的影响。考虑如下场景：    
 假设`writers_`队列中有两个写操作w1，w2，其中w2为写空操作，同时假设`imm_`为空。    
 如果w1将w2合并写入`mem_`，同时`imm_`为仍然为空。那么`TEST_CompactMemTable`仍然会返回，但它写空操作并没有将它前面的数据刷入文件。
-
-
-
