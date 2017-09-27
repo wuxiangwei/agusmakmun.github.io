@@ -25,9 +25,21 @@ rebase，顾名思义，修改分支的base，然后在新base上应用已经修
 逐个将保持在临时区域内的commit重新apply到当前分支。
 
 
-应用场景：       
+应用场景1：       
 两个分支a和b，在分支a中做了修改c，欲将c同步到b中。    
 
 1. 基于分支a创建新分支aa。执行`git branch aa a`命令；
 2. 将分支aa reset到分支b，将修改c应用到分支aa。执行`git rebase a --onto b`命令。
 3. 将分支aa提交到refs/for/b中评审，评审结束后直接merge到分支b，这部分工作由gerrit来完成。
+
+
+应用场景2：   
+本地代码库有commit没提交到远程版本库，远程版本库也有新的commit。此时，拉取远程版本库。
+
+1. 执行`git fetch origin`命令拉取远程版本，但不自动合并；
+2. 执行`git rebase origin/master`将本地的commit重新apply到origin/master；
+
+
+
+
+
