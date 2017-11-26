@@ -4,6 +4,10 @@ title: About
 permalink: /about/
 ---
 
-I am freelance developer. Currently doing more in backend, focused in Python and Django.
+笔名shanno，一个有重度拖延症的程序员，从事文件存储方面的研发。
 
-email: agus[at]python.web.id
+
+邮箱：
+
+shanno@yeah.net    
+wu.xiangwei@aliyun.com
