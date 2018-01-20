@@ -8,6 +8,7 @@ tags: 存储
 ---
 
 * Kramdown table of content
+{:toc, toc}
 
 # 磁盘问题 #
 
