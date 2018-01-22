@@ -27,8 +27,18 @@ iostat -txm 2 -p /dev/sdb
 
 # awk #
 
-## 帅选行 ##
+## 筛选行 ##
 
-`ceph osd df | awk '$7 > 80'` 帅选第7列大于80的行。
+**根据条件筛选行**
+
+`ceph osd df | awk '$7 > 80'` 筛选第7列大于80的行。
+
+# sort #
+
+## 依据指定行排列 ##
+
+`ceph osd df | awk '$7 > 80' | sort -k 7` 依据第7列升序排序。
+
+
 
 
