@@ -24,3 +24,11 @@ iftop -i eth5.100 -B
 
 
 iostat -txm 2 -p /dev/sdb
+
+# awk #
+
+## 帅选行 ##
+
+`ceph osd df | awk '$7 > 80'` 帅选第7列大于80的行。
+
+
