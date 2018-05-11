@@ -3,7 +3,7 @@ layout: post
 title: Ceph Monitor Compact
 date: 2017-08-31
 author: wuxiangwei
-category: [Ceph]
+category: Ceph
 tags: Ceph
 ---
 
@@ -33,4 +33,7 @@ void Monitor::handle_command() {
     << "cmd=" << m->cmd << ": dispatch";
 }
 ```
-Audit日志实现涉及到下面2个概念：(1) LogClientTemp，每记录一条日志就实例化一个对象，对象析构时把日志内容传递给LogChannel；(2) LogChannel 根据配置可以将日志内容写到多个地方，例如写到syslog、graylog或者发送给Monitor。同时，每条日志都会被忽略优先级记录到本地log文件。
+Audit日志实现涉及到下面2个概念：
+
+1. LogClientTemp，每记录一条日志就实例化一个对象，对象析构时把日志内容传递给LogChannel；
+2. LogChannel 根据配置可以将日志内容写到多个地方，例如写到syslog、graylog或者发送给Monitor。同时，每条日志都会被忽略优先级记录到本地log文件。

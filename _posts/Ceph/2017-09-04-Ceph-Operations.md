@@ -9,6 +9,7 @@ tags: Ceph
 
 * Kramdown table of contents:
 {:toc, toc}
+<br>
 
 查看自启动：    
 `sudo chkconfig --list | grep ceph`
@@ -16,12 +17,11 @@ tags: Ceph
 查看OSD所在主机：    
 `ceph osd find 123`
 
+
 # Luminous v12.2.0 版本
 
 
 修改源，参考[CEPH-DEPLOY SETUP](http://docs.ceph.com/docs/master/start/quick-start-preflight/#debian-ubuntu)。
-
-
 
 
 ```

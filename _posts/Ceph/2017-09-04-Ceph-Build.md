@@ -9,6 +9,7 @@ tags: Ceph
 
 * Kramdown table of contents
 {:toc .toc}
+<br>
 
 # v0.94.6版本
 
@@ -84,9 +85,5 @@ Debian9默认的ceph-deploy 1.5.38不支持debian9版本，报如下错误：
 [ceph_deploy][ERROR ] UnsupportedPlatform: Platform is not supported: debian  9.1
 ```
 使用pip把ceph-deploy升级到1.5.39版本。
-
-
-
-
 
 
