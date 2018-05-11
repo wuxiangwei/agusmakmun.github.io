@@ -2,8 +2,7 @@
 layout: post
 title: Git Submodule（子模组）
 author: wuxiangwei
-categories: 工具 Git
-tags: 工具 Git
+categories: Git
 ---
 
 | 时间 | 事件 |

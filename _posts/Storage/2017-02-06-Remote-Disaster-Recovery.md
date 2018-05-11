@@ -3,9 +3,13 @@ layout: post
 title: 基于Ceph快照的异地灾备设计 
 date: 2017-02-06
 author: wuxiangwei
-categories: 技术
-tags: 技术
+categories: 存储
 ---
+
+* Kramdown table of content
+{:toc, toc}
+<br>
+
 
 技术改变生活。
 越来越方便的手机让大家能够更有效的利用碎片时间，我很享受在上下班的公交车上或在阳光明媚的花园里梳理思路，并写成文字上传到简书；要是搁在几年前的PC时代画风可能是坐在星巴克靠窗的桌子上边喝咖啡边敲键盘；如果时间再久远点，应该有间书房有张书桌，书桌边有个磨墨的小书童…

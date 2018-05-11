@@ -5,11 +5,11 @@ subtitle: "Object IO到磁盘的映射"
 date: 2017-02-06
 author: wuxiangwei
 categories: Ceph
-tags: Ceph 
 ---
 
-
-
+* Kramdown table of content
+{:toc, toc}
+<br>
 
 简单回顾下Ceph OSD后端存储引擎的历史。
 
